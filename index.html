@@ -1,0 +1,1838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎵 Raga Tune Generator 🎵</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            height: 100vh;
+            gap: 0;
+        }
+
+        /* Left Sidebar */
+        .sidebar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 30px 25px;
+            overflow-y: auto;
+            box-shadow: 5px 0 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 10px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            font-size: 26px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 5px;
+        }
+
+        .logo p {
+            font-size: 12px;
+            color: #666;
+            font-weight: 400;
+        }
+
+        .control-section {
+            margin-bottom: 25px;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-label::before {
+            content: '';
+            width: 4px;
+            height: 16px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+
+        select, input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+            background: white;
+            transition: all 0.3s;
+            color: #333;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%23667eea' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            padding-right: 40px;
+        }
+
+        /* Enhanced Raga Selection */
+        .raga-select-container {
+            position: relative;
+        }
+
+        #ragaSelect {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 0;
+        }
+
+        #ragaSelect option {
+            padding: 12px 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        #ragaSelect option:hover {
+            background: linear-gradient(135deg, #ede9fe, #ddd6fe);
+        }
+
+        #ragaSelect option:checked {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            font-weight: 600;
+        }
+
+        .info-text {
+            font-size: 11px;
+            color: #6b7280;
+            margin-top: 8px;
+            line-height: 1.5;
+            padding: 8px 12px;
+            background: #f9fafb;
+            border-radius: 8px;
+            border-left: 3px solid #667eea;
+        }
+
+        .raga-type {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 10px;
+            font-weight: 600;
+            margin-top: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .melakarta {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            color: #1565c0;
+        }
+
+        .janya {
+            background: linear-gradient(135deg, #f3e5f5, #e1bee7);
+            color: #6a1b9a;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .filter-btn {
+            flex: 1;
+            padding: 8px 12px;
+            border: 2px solid #e5e7eb;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            transition: all 0.3s;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 15px;
+            background: #f9fafb;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .radio-item:hover {
+            background: #f3f4f6;
+            border-color: #e5e7eb;
+        }
+
+        .radio-item input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            margin: 0;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
+        .radio-item label {
+            margin: 0;
+            cursor: pointer;
+            font-size: 13px;
+            color: #374151;
+            font-weight: 500;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border-radius: 10px;
+            margin-top: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .checkbox-item:hover {
+            transform: translateX(5px);
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin: 0;
+            cursor: pointer;
+            accent-color: #f59e0b;
+        }
+
+        .checkbox-item label {
+            cursor: pointer;
+            font-size: 13px;
+            color: #92400e;
+            font-weight: 600;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px 40px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title h2 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 5px;
+        }
+
+        .header-title p {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .status-badge {
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        .status-badge::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .status-badge.ready {
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+            color: #065f46;
+        }
+
+        .status-badge.ready::before {
+            background: #10b981;
+        }
+
+        .status-badge.playing {
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            color: #1e3a8a;
+        }
+
+        .status-badge.playing::before {
+            background: #3b82f6;
+        }
+
+        .status-badge.stopped {
+            background: linear-gradient(135deg, #fee2e2, #fecaca);
+            color: #991b1b;
+        }
+
+        .status-badge.stopped::before {
+            background: #ef4444;
+        }
+
+        .visualization-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .visual-circle {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(20px);
+            border: 3px solid rgba(255, 255, 255, 0.5);
+            position: relative;
+            transition: all 0.5s;
+        }
+
+        .visual-circle.playing {
+            animation: rotate 10s linear infinite, scale-pulse 2s ease-in-out infinite;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.4), rgba(118, 75, 162, 0.4));
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes scale-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .visual-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .visual-text {
+            font-size: 20px;
+            font-weight: 600;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        button {
+            padding: 18px 40px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-play {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            min-width: 150px;
+            justify-content: center;
+        }
+
+        .btn-play:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-stop {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            min-width: 150px;
+            justify-content: center;
+        }
+
+        .btn-stop:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+            min-width: 150px;
+            justify-content: center;
+        }
+
+        .btn-save:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-import {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            min-width: 150px;
+            justify-content: center;
+        }
+
+        .btn-import:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(245, 158, 11, 0.4);
+        }
+
+        .wave-bars {
+            display: flex;
+            gap: 8px;
+            margin-top: 30px;
+            height: 60px;
+            align-items: flex-end;
+        }
+
+        .wave-bar {
+            width: 6px;
+            background: linear-gradient(180deg, #667eea, #764ba2);
+            border-radius: 3px;
+            transition: height 0.3s;
+        }
+
+        .wave-bars.playing .wave-bar {
+            animation: wave 1s ease-in-out infinite;
+        }
+
+        .wave-bar:nth-child(1) { animation-delay: 0s; }
+        .wave-bar:nth-child(2) { animation-delay: 0.1s; }
+        .wave-bar:nth-child(3) { animation-delay: 0.2s; }
+        .wave-bar:nth-child(4) { animation-delay: 0.3s; }
+        .wave-bar:nth-child(5) { animation-delay: 0.4s; }
+        .wave-bar:nth-child(6) { animation-delay: 0.3s; }
+        .wave-bar:nth-child(7) { animation-delay: 0.2s; }
+        .wave-bar:nth-child(8) { animation-delay: 0.1s; }
+
+        @keyframes wave {
+            0%, 100% { height: 20px; }
+            50% { height: 60px; }
+        }
+
+        .info-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding: 0 40px 40px 40px;
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .info-card-title {
+            font-size: 12px;
+            color: #6b7280;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .info-card-value {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .live-update-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-left: 8px;
+            animation: pulse-badge 2s infinite;
+        }
+
+        @keyframes pulse-badge {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(0.95); }
+        }
+
+        #importFile {
+            display: none;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .app-container {
+                grid-template-columns: 300px 1fr;
+            }
+
+            .visual-circle {
+                width: 250px;
+                height: 250px;
+            }
+
+            .visual-icon {
+                font-size: 60px;
+            }
+        }
+
+        @media (max-width: 968px) {
+            .app-container {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+
+            .sidebar {
+                max-height: none;
+            }
+
+            .main-content {
+                min-height: 100vh;
+            }
+
+            .info-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .control-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+
+        /* Background Animation */
+        .bg-shapes {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .shape:nth-child(1) {
+            width: 200px;
+            height: 200px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .shape:nth-child(2) {
+            width: 150px;
+            height: 150px;
+            top: 60%;
+            right: 15%;
+            animation-delay: 3s;
+        }
+
+        .shape:nth-child(3) {
+            width: 100px;
+            height: 100px;
+            bottom: 20%;
+            left: 50%;
+            animation-delay: 6s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) translateX(0);
+            }
+            25% {
+                transform: translateY(-30px) translateX(30px);
+            }
+            50% {
+                transform: translateY(-60px) translateX(-30px);
+            }
+            75% {
+                transform: translateY(-30px) translateX(-60px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <div class="app-container">
+        <!-- Left Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <h1>🎵 Raga Generator</h1>
+                <p>Carnatic Music Composition Tool</p>
+            </div>
+
+            <!-- Raga Selection -->
+            <div class="control-section">
+                <div class="section-label">
+                    🎼 Select Raga
+                    <span class="live-update-badge" id="liveUpdateBadge" style="display: none;">Live Update</span>
+                </div>
+                <div class="filter-group">
+                    <button class="filter-btn active" onclick="filterRagas('all')">All</button>
+                    <button class="filter-btn" onclick="filterRagas('melakarta')">Melakarta</button>
+                    <button class="filter-btn" onclick="filterRagas('janya')">Janya</button>
+                </div>
+                <input type="text" id="ragaSearch" placeholder="🔍 Search raga..." oninput="searchRagas()">
+                <select id="ragaSelect" size="5"></select>
+                <div class="info-text" id="ragaInfo"></div>
+            </div>
+
+            <!-- Taala Selection -->
+            <div class="control-section">
+                <div class="section-label">🥁 Select Taala</div>
+                <select id="taalaSelect">
+                    <option value="Adi (Chatusra)" selected>Adi (Chatusra)</option>
+                    <option value="Rupaka">Rupaka</option>
+                    <option value="Mishra Chapu">Mishra Chapu</option>
+                    <option value="Khanda Chapu">Khanda Chapu</option>
+                    <option value="Jhempe">Jhempe</option>
+                    <option value="Triputa (Tisra)">Triputa (Tisra)</option>
+                    <option value="Ata">Ata</option>
+                    <option value="Dhruva">Dhruva</option>
+                    <option value="Matya">Matya</option>
+                    <option value="Eka">Eka</option>
+                </select>
+                <div class="info-text" id="taalaInfo"></div>
+            </div>
+
+            <!-- Pitch Settings -->
+            <div class="control-section">
+                <div class="section-label">🎹 Pitch Settings</div>
+                <div class="grid-2">
+                    <div>
+                        <select id="basePitch">
+                            <option value="C" selected>C (Sa)</option>
+                            <option value="C#">C# (Sa)</option>
+                            <option value="D">D (Sa)</option>
+                            <option value="D#">D# (Sa)</option>
+                            <option value="E">E (Sa)</option>
+                            <option value="F">F (Sa)</option>
+                            <option value="F#">F# (Sa)</option>
+                            <option value="G">G (Sa)</option>
+                            <option value="G#">G# (Sa)</option>
+                            <option value="A">A (Sa)</option>
+                            <option value="A#">A# (Sa)</option>
+                            <option value="B">B (Sa)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <select id="octave">
+                            <option value="Low">Low Octave</option>
+                            <option value="Middle" selected>Middle Octave</option>
+                            <option value="High">High Octave</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Duration Settings -->
+            <div class="control-section">
+                <div class="section-label">⏱️ Duration</div>
+                <div class="grid-2">
+                    <div>
+                        <input type="number" id="cycles" min="1" max="100" value="8" placeholder="Cycles">
+                    </div>
+                    <div>
+                        <input type="number" id="tempo" min="60" max="200" value="120" placeholder="BPM">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Instrument Selection -->
+            <div class="control-section">
+                <div class="section-label">🎸 Instrument</div>
+                <select id="instrument">
+                    <option value="flute">🪈 Flute</option>
+                    <option value="sitar">🎸 Sitar</option>
+                    <option value="violin">🎻 Violin</option>
+                    <option value="harmonium">🎹 Harmonium</option>
+                    <option value="piano">🎹 Piano</option>
+                    <option value="guitar">🎸 Guitar</option>
+                    <option value="veena">🎻 Veena</option>
+                    <option value="tabla">🥁 Tabla (Percussion)</option>
+                    <option value="santoor">🎵 Santoor</option>
+                    <option value="sarangi">🎻 Sarangi</option>
+                </select>
+            </div>
+
+            <!-- Generation Pattern -->
+            <div class="control-section">
+                <div class="section-label">🎨 Pattern Style</div>
+                <div class="radio-group">
+                    <div class="radio-item">
+                        <input type="radio" id="melodic" name="pattern" value="melodic" checked>
+                        <label for="melodic">Melodic Flow</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="aroha" name="pattern" value="aroha_avaroha">
+                        <label for="aroha">Arohanam-Avarohanam</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="random" name="pattern" value="random">
+                        <label for="random">Random Exploration</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="gamaka" name="pattern" value="gamaka">
+                        <label for="gamaka">Gamaka Style</label>
+                    </div>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="smooth" checked>
+                    <label for="smooth">✨ Smooth Transition (Legato)</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <div class="header-content">
+                    <div class="header-title">
+                        <h2>Carnatic Music Generator</h2>
+                        <p>Create beautiful melodies based on traditional ragas</p>
+                    </div>
+                    <div class="status-badge ready" id="statusBadge">
+                        Ready to Generate
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visualization Area -->
+            <div class="visualization-area">
+                <div class="visual-circle" id="visualCircle">
+                    <div class="visual-icon">🎵</div>
+                    <div class="visual-text" id="visualText">Ready</div>
+                </div>
+
+                <div class="wave-bars" id="waveBars">
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                </div>
+
+                <div class="control-buttons">
+                    <button class="btn-play" id="playBtn">
+                        ▶️ Play
+                    </button>
+                    <button class="btn-stop" id="stopBtn" disabled>
+                        ⏹️ Stop
+                    </button>
+                    <button class="btn-save" id="saveBtn" disabled>
+                        💾 Save
+                    </button>
+                    <button class="btn-import" id="importBtn">
+                        📂 Import
+                    </button>
+                </div>
+                <input type="file" id="importFile" accept=".txt" />
+            </div>
+
+            <!-- Info Cards -->
+            <div class="info-cards">
+                <div class="info-card">
+                    <div class="info-card-title">Current Raga</div>
+                    <div class="info-card-value" id="currentRaga">Mohanam</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-title">Taala Cycle</div>
+                    <div class="info-card-value" id="currentTaala">Adi (8 beats)</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-title">Duration</div>
+                    <div class="info-card-value" id="currentDuration">~32 sec</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="ragas.js"></script>
+    <script>
+        // Audio Context & Variables
+        let audioContext;
+        let isPlaying = false;
+        let stopPlayback = false;
+        let currentNotes = [];
+        let scheduledNotes = [];
+        let currentFilter = 'all';
+        let liveUpdateMode = false;
+        let playbackStartTime = 0;
+        let currentNoteIndex = 0;
+        let playbackIntervalId = null;
+
+        // Taalas Data
+        const taalas = {
+            "Adi (Chatusra)": { beats: 8, structure: "4+2+2", description: "Most common - Foundation tala" },
+            "Rupaka": { beats: 6, structure: "2+4", description: "Popular 6-beat cycle" },
+            "Mishra Chapu": { beats: 7, structure: "3+2+2", description: "Popular 7-beat cycle" },
+            "Khanda Chapu": { beats: 5, structure: "2+3", description: "Energetic 5-beat cycle" },
+            "Jhempe": { beats: 10, structure: "7+1+2", description: "Complex 10-beat cycle" },
+            "Triputa (Tisra)": { beats: 7, structure: "3+2+2", description: "Triputa with tisra jati" },
+            "Ata": { beats: 14, structure: "5+5+2+2", description: "Grand 14-beat cycle" },
+            "Dhruva": { beats: 14, structure: "4+2+4+4", description: "Majestic 14-beat cycle" },
+            "Matya": { beats: 10, structure: "4+2+4", description: "Balanced 10-beat cycle" },
+            "Eka": { beats: 4, structure: "4", description: "Simple 4-beat cycle" }
+        };
+
+        // Pitch Map
+        const pitchMap = {
+            "C": 0, "C#": 1, "D": 2, "D#": 3, "E": 4, "F": 5,
+            "F#": 6, "G": 7, "G#": 8, "A": 9, "A#": 10, "B": 11
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            populateRagaSelect();
+            updateTaalaInfo();
+            updateInfoCards();
+            
+            // Add event listeners for live updates
+            document.getElementById('ragaSelect').addEventListener('change', handleLiveUpdate);
+            document.getElementById('taalaSelect').addEventListener('change', handleLiveUpdate);
+            document.getElementById('basePitch').addEventListener('change', handleLiveUpdate);
+            document.getElementById('octave').addEventListener('change', handleLiveUpdate);
+            document.getElementById('cycles').addEventListener('input', handleLiveUpdate);
+            document.getElementById('tempo').addEventListener('input', handleLiveUpdate);
+            document.getElementById('instrument').addEventListener('change', handleLiveUpdate);
+            document.querySelectorAll('input[name="pattern"]').forEach(radio => {
+                radio.addEventListener('change', handleLiveUpdate);
+            });
+            document.getElementById('smooth').addEventListener('change', handleLiveUpdate);
+            
+            document.getElementById('playBtn').addEventListener('click', playTune);
+            document.getElementById('stopBtn').addEventListener('click', stopTune);
+            document.getElementById('saveBtn').addEventListener('click', saveTune);
+            document.getElementById('importBtn').addEventListener('click', () => {
+                document.getElementById('importFile').click();
+            });
+            document.getElementById('importFile').addEventListener('change', importTune);
+        });
+
+        function handleLiveUpdate() {
+            updateRagaInfo();
+            updateInfoCards();
+            
+            if (isPlaying) {
+                // Show live update badge
+                const badge = document.getElementById('liveUpdateBadge');
+                badge.style.display = 'inline-block';
+                setTimeout(() => {
+                    badge.style.display = 'none';
+                }, 2000);
+                
+                // Regenerate and continue playback with new settings
+                regeneratePlayback();
+            }
+        }
+
+        function regeneratePlayback() {
+            // Stop current notes smoothly
+            stopCurrentNotes();
+            
+            // Generate new notes with current settings
+            const newNotes = generateNoteSequence();
+            currentNotes = newNotes;
+            
+            // Continue playback from current position
+            const elapsedTime = audioContext.currentTime - playbackStartTime;
+            let startIndex = 0;
+            
+            for (let i = 0; i < newNotes.length; i++) {
+                if (newNotes[i].startTime > elapsedTime) {
+                    startIndex = i;
+                    break;
+                }
+            }
+            
+            // Schedule remaining notes
+            scheduleNotesFromIndex(startIndex);
+        }
+
+        function stopCurrentNotes() {
+            scheduledNotes.forEach(({ osc, gainNode }) => {
+                try {
+                    gainNode.gain.cancelScheduledValues(audioContext.currentTime);
+                    gainNode.gain.setValueAtTime(gainNode.gain.value, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.05);
+                    osc.stop(audioContext.currentTime + 0.05);
+                } catch (e) {}
+            });
+            scheduledNotes = [];
+        }
+
+        function populateRagaSelect(filter = 'all', searchTerm = '') {
+            const select = document.getElementById('ragaSelect');
+            select.innerHTML = '';
+            
+            const sortedRagas = Object.entries(RAGAS).sort((a, b) => {
+                if (a[1].type === b[1].type) {
+                    if (a[1].type === 'Melakarta') {
+                        return a[1].number - b[1].number;
+                    }
+                    return a[0].localeCompare(b[0]);
+                }
+                return a[1].type === 'Melakarta' ? -1 : 1;
+            });
+
+            for (const [name, data] of sortedRagas) {
+                if (filter !== 'all' && data.type.toLowerCase() !== filter) continue;
+                if (searchTerm && !name.toLowerCase().includes(searchTerm.toLowerCase())) continue;
+                
+                const option = document.createElement('option');
+                option.value = name;
+                const prefix = data.type === 'Melakarta' ? `M${data.number} - ` : 'J - ';
+                option.textContent = prefix + name;
+                select.appendChild(option);
+            }
+            
+            if (select.options.length > 0) {
+                select.selectedIndex = 0;
+                updateRagaInfo();
+            }
+        }
+
+        function filterRagas(type) {
+            currentFilter = type;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            populateRagaSelect(type, document.getElementById('ragaSearch').value);
+        }
+
+        function searchRagas() {
+            const searchTerm = document.getElementById('ragaSearch').value;
+            populateRagaSelect(currentFilter, searchTerm);
+        }
+
+        function updateRagaInfo() {
+            const ragaName = document.getElementById('ragaSelect').value;
+            if (!ragaName || !RAGAS[ragaName]) return;
+            
+            const raga = RAGAS[ragaName];
+            let info = raga.description;
+            
+            if (raga.type === 'Janya' && raga.parent) {
+                info += ` | Parent: ${raga.parent}`;
+            }
+            
+            const typeClass = raga.type.toLowerCase();
+            const typeLabel = raga.type === 'Melakarta' 
+                ? `<span class="raga-type melakarta">Melakarta #${raga.number}</span>` 
+                : `<span class="raga-type janya">Janya Raga</span>`;
+            
+            document.getElementById('ragaInfo').innerHTML = info + '<br>' + typeLabel;
+        }
+
+        function updateTaalaInfo() {
+            const taalaName = document.getElementById('taalaSelect').value;
+            const taala = taalas[taalaName];
+            const info = `${taala.beats} beats (${taala.structure}) - ${taala.description}`;
+            document.getElementById('taalaInfo').textContent = info;
+        }
+
+        function updateInfoCards() {
+            const ragaName = document.getElementById('ragaSelect').value || 'Mohanam';
+            const taalaName = document.getElementById('taalaSelect').value;
+            const cycles = parseInt(document.getElementById('cycles').value);
+            const tempo = parseInt(document.getElementById('tempo').value);
+            const taala = taalas[taalaName];
+            
+            const totalBeats = taala.beats * cycles;
+            const duration = Math.round((totalBeats * 60) / tempo);
+            
+            document.getElementById('currentRaga').textContent = ragaName;
+            document.getElementById('currentTaala').textContent = `${taalaName.split(' ')[0]} (${taala.beats} beats)`;
+            document.getElementById('currentDuration').textContent = `~${duration} sec`;
+        }
+
+        function getRootNote() {
+            const octaveMap = { "Low": 48, "Middle": 60, "High": 72 };
+            const baseOctave = octaveMap[document.getElementById('octave').value];
+            const pitchOffset = pitchMap[document.getElementById('basePitch').value];
+            return baseOctave + pitchOffset;
+        }
+
+        function midiToFreq(midi) {
+            return 440 * Math.pow(2, (midi - 69) / 12);
+        }
+
+        function generateMelodicPattern(notes, numNotes) {
+            const melody = [];
+            let currentIdx = 0;
+            for (let i = 0; i < numNotes; i++) {
+                melody.push(notes[currentIdx]);
+                if (Math.random() < 0.7) {
+                    currentIdx = (currentIdx + (Math.random() < 0.5 ? -1 : 1) + notes.length) % notes.length;
+                } else {
+                    currentIdx = Math.floor(Math.random() * notes.length);
+                }
+            }
+            return melody;
+        }
+
+        function generateArohaAvarohaPattern(arohanam, avarohanam, numNotes) {
+            const melody = [];
+            while (melody.length < numNotes) {
+                melody.push(...arohanam.slice(0, Math.min(arohanam.length, numNotes - melody.length)));
+                if (melody.length >= numNotes) break;
+                melody.push(...avarohanam.slice(0, Math.min(avarohanam.length, numNotes - melody.length)));
+            }
+            return melody.slice(0, numNotes);
+        }
+
+        function generateRandomPattern(notes, numNotes) {
+            return Array.from({ length: numNotes }, () => notes[Math.floor(Math.random() * notes.length)]);
+        }
+
+        function generateGamakaPattern(notes, numNotes) {
+            const melody = [];
+            let currentIdx = 0;
+            for (let i = 0; i < numNotes; i++) {
+                melody.push(notes[currentIdx]);
+                if (Math.random() < 0.5 && melody.length < numNotes - 2) {
+                    const nextIdx = (currentIdx + 1) % notes.length;
+                    melody.push(notes[nextIdx]);
+                    melody.push(notes[currentIdx]);
+                }
+                currentIdx = (currentIdx + Math.floor(Math.random() * 3)) % notes.length;
+            }
+            return melody.slice(0, numNotes);
+        }
+
+        // Enhanced instrument synthesis with distinct sounds
+        function createOscillator(freq, startTime, duration, instrument, velocity, isSmooth) {
+            const vol = velocity / 127;
+            
+            switch(instrument) {
+                case 'flute':
+                    return createFluteSound(freq, startTime, duration, vol, isSmooth);
+                case 'sitar':
+                    return createSitarSound(freq, startTime, duration, vol, isSmooth);
+                case 'violin':
+                    return createViolinSound(freq, startTime, duration, vol, isSmooth);
+                case 'harmonium':
+                    return createHarmoniumSound(freq, startTime, duration, vol, isSmooth);
+                case 'piano':
+                    return createPianoSound(freq, startTime, duration, vol, isSmooth);
+                case 'guitar':
+                    return createGuitarSound(freq, startTime, duration, vol, isSmooth);
+                case 'veena':
+                    return createVeenaSound(freq, startTime, duration, vol, isSmooth);
+                case 'tabla':
+                    return createTablaSound(freq, startTime, duration, vol, isSmooth);
+                case 'santoor':
+                    return createSantoorSound(freq, startTime, duration, vol, isSmooth);
+                case 'sarangi':
+                    return createSarangiSound(freq, startTime, duration, vol, isSmooth);
+                default:
+                    return createFluteSound(freq, startTime, duration, vol, isSmooth);
+            }
+        }
+
+        // Flute - Pure sine with subtle vibrato
+        function createFluteSound(freq, startTime, duration, vol, isSmooth) {
+            const osc = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            const filterNode = audioContext.createBiquadFilter();
+            const vibrato = audioContext.createOscillator();
+            const vibratoGain = audioContext.createGain();
+            
+            osc.type = 'sine';
+            filterNode.type = 'lowpass';
+            filterNode.frequency.value = 2000;
+            filterNode.Q.value = 1;
+            
+            // Vibrato
+            vibrato.frequency.value = 5;
+            vibratoGain.gain.value = 3;
+            vibrato.connect(vibratoGain);
+            vibratoGain.connect(osc.frequency);
+            
+            osc.frequency.value = freq;
+            
+            // Smooth ADSR
+            const attack = isSmooth ? 0.05 : 0.02;
+            const decay = 0.1;
+            const sustain = vol * 0.8;
+            const release = isSmooth ? 0.3 : 0.15;
+            
+            gainNode.gain.setValueAtTime(0, startTime);
+            gainNode.gain.exponentialRampToValueAtTime(vol, startTime + attack);
+            gainNode.gain.exponentialRampToValueAtTime(sustain, startTime + attack + decay);
+            gainNode.gain.setValueAtTime(sustain, startTime + duration - release);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+            
+            osc.connect(filterNode);
+            filterNode.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            osc.start(startTime);
+            vibrato.start(startTime);
+            osc.stop(startTime + duration);
+            vibrato.stop(startTime + duration);
+            
+            return { osc, gainNode };
+        }
+
+        // Sitar - Triangle with harmonics and decay
+        function createSitarSound(freq, startTime, duration, vol, isSmooth) {
+            const fundamentalOsc = audioContext.createOscillator();
+            const harmonic2 = audioContext.createOscillator();
+            const harmonic3 = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            const filterNode = audioContext.createBiquadFilter();
+            
+            fundamentalOsc.type = 'triangle';
+            harmonic2.type = 'triangle';
+            harmonic3.type = 'triangle';
+            
+            fundamentalOsc.frequency.value = freq;
+            harmonic2.frequency.value = freq * 2;
+            harmonic3.frequency.value = freq * 3;
+            
+            filterNode.type = 'bandpass';
+            filterNode.frequency.value = freq * 2;
+            filterNode.Q.value = 2;
+            
+            // Sharp attack, long decay
+            gainNode.gain.setValueAtTime(0, startTime);
+            gainNode.gain.exponentialRampToValueAtTime(vol, startTime + 0.005);
+            gainNode.gain.exponentialRampToValueAtTime(vol * 0.3, startTime + 0.1);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+            
+            fundamentalOsc.connect(filterNode);
+            harmonic2.connect(filterNode);
+            harmonic3.connect(filterNode);
+            filterNode.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            fundamentalOsc.start(startTime);
+            harmonic2.start(startTime);
+            harmonic3.start(startTime);
+            fundamentalOsc.stop(startTime + duration);
+            harmonic2.stop(startTime + duration);
+            harmonic3.stop(startTime + duration);
+            
+            return { osc: fundamentalOsc, gainNode };
+        }
+
+        // Violin - Sawtooth with filter sweep
+        function createViolinSound(freq, startTime, duration, vol, isSmooth) {
+            const osc = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            const filterNode = audioContext.createBiquadFilter();
+            
+            osc.type = 'sawtooth';
+            osc.frequency.value = freq;
+            
+            filterNode.type = 'lowpass';
+            filterNode.frequency.value = freq * 4;
+            filterNode.Q.value = 5;
+            
+            // Filter sweep for violin-like sound
+            filterNode.frequency.setValueAtTime(freq * 2, startTime);
+            filterNode.frequency.exponentialRampToValueAtTime(freq * 6, startTime + duration * 0.3);
+            filterNode.frequency.setValueAtTime(freq * 6, startTime + duration * 0.3);
+            filterNode.frequency.exponentialRampToValueAtTime(freq * 3, startTime + duration);
+            
+            const attack = isSmooth ? 0.08 : 0.03;
+            const decay = 0.15;
+            const sustain = vol * 0.7;
+            const release = isSmooth ? 0.25 : 0.12;
+            
+            gainNode.gain.setValueAtTime(0, startTime);
+            gainNode.gain.exponentialRampToValueAtTime(vol, startTime + attack);
+            gainNode.gain.exponentialRampToValueAtTime(sustain, startTime + attack + decay);
+            gainNode.gain.setValueAtTime(sustain, startTime + duration - release);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+            
+            osc.connect(filterNode);
+            filterNode.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            osc.start(startTime);
+            osc.stop(startTime + duration);
+            
+            return { osc, gainNode };
+        }
+
+        // Harmonium - Square wave with chorus effect
+        function createHarmoniumSound(freq, startTime, duration, vol, isSmooth) {
+            const osc1 = audioContext.createOscillator();
+            const osc2 = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            const filterNode = audioContext.createBiquadFilter();
+            
+            osc1.type = 'square';
+            osc2.type = 'square';
+            osc1.frequency.value = freq;
+            osc2.frequency.value = freq * 1.005; // Slight detune for chorus
+            
+            filterNode.type = 'lowpass';
+            filterNode.frequency.value = 1500;
+            filterNode.Q.value = 1;
+            
+            const attack = 0.04;
+            const sustain = vol * 0.9;
+            const release = isSmooth ? 0.3 : 0.15;
+            
+            gainNode.gain.setValueAtTime(0, startTime);
+            gainNode.gain.linearRampToValueAtTime(sustain, startTime + attack);
+            gainNode.gain.setValueAtTime(sustain, startTime + duration - release);
+            gainNode.gain.linearRampToValueAtTime(0, startTime + duration);
+            
+            osc1.connect(filterNode);
+            osc2.connect(filterNode);
+            filterNode.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            osc1.start(startTime);
+            osc2.start(startTime);
+            osc1.stop(startTime + duration);
+            osc2.stop(startTime + duration);
+            
+            return { osc: osc1, gainNode };
+        }
+
+        // Piano - Complex with multiple partials
+        function createPianoSound(freq, startTime, duration, vol, isSmooth) {
+            const fundamentalOsc = audioContext.createOscillator();
+            const partial2 = audioContext.createOscillator();
+            const partial3 = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            const filterNode = audioContext.createBiquadFilter();
+            
+            fundamentalOsc.type = 'triangle';
+            partial2.type = 'sine';
+            partial3.type = 'sine';
+            
+            fundamentalOsc.frequency.value = freq;
+            partial2.frequency.value = freq * 2;
+            partial3.frequency.value = freq * 3.5;
+            
+            filterNode.type = 'lowpass';
+            filterNode.frequency.value = 4000;
+            filterNode.Q.value = 0.5;
+            
+            // Piano-like envelope: fast attack, medium decay
+            gainNode.gain.setValueAtTime(0, startTime);
+            gainNode.gain.exponentialRampToValueAtTime(vol, startTime + 0.01);
+            gainNode.gain.exponentialRampToValueAtTime(vol * 0.4, startTime + 0.08);
+            gainNode.gain.exponentialRampToValueAtTime(vol * 0.2, startTime + 0.2);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+            
+            fundamentalOsc.connect(filterNode);
+            partial2.connect(filterNode);
+            partial3.connect(filterNode);
+            filterNode.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            fundamentalOsc.start(startTime);
+            partial2.start(startTime);
+            partial3.start(startTime);
+            fundamentalOsc.stop(startTime + duration);
+            partial2.stop(startTime + duration);
+            partial3.stop(startTime + duration);
+            
+            return { osc: fundamentalOsc, gainNode };
+        }
+
+        // Guitar - Plucked string simulation
+        function createGuitarSound(freq, startTime, duration, vol, isSmooth) {
+            const osc = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            const filterNode = audioContext.createBiquadFilter();
+            
+            osc.type = 'sawtooth';
+            osc.frequency.value = freq;
+            
+            filterNode.type = 'bandpass';
+            filterNode.frequency.value = freq * 3;
+            filterNode.Q.value = 3;
+            
+            // Pluck envelope
+            gainNode.gain.setValueAtTime(0, startTime);
+            gainNode.gain.exponentialRampToValueAtTime(vol * 1.2, startTime + 0.003);
+            gainNode.gain.exponentialRampToValueAtTime(vol * 0.5, startTime + 0.05);
+            gainNode.gain.exponentialRampToValueAtTime(vol * 0.2, startTime + 0.15);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+            
+            osc.connect(filterNode);
+            filterNode.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            osc.start(startTime);
+            osc.stop(startTime + duration);
+            
+            return { osc, gainNode };
+        }
+
+        // Veena - Rich harmonics
+        function createVeenaSound(freq, startTime, duration, vol, isSmooth) {
+            const osc1 = audioContext.createOscillator();
+            const osc2 = audioContext.createOscillator();
+            const osc3 = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            const filterNode = audioContext.createBiquadFilter();
+            
+            osc1.type = 'triangle';
+            osc2.type = 'sine';
+            osc3.type = 'sine';
+            
+            osc1.frequency.value = freq;
+            osc2.frequency.value = freq * 2;
+            osc3.frequency.value = freq * 4;
+            
+            filterNode.type = 'lowpass';
+            filterNode.frequency.value = 2500;
+            filterNode.Q.value = 2;
+            
+            gainNode.gain.setValueAtTime(0, startTime);
+            gainNode.gain.exponentialRampToValueAtTime(vol, startTime + 0.01);
+            gainNode.gain.exponentialRampToValueAtTime(vol * 0.6, startTime + 0.08);
+            gainNode.gain.exponentialRampToValueAtTime(vol * 0.3, startTime + 0.2);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+            
+            osc1.connect(filterNode);
+            osc2.connect(filterNode);
+            osc3.connect(filterNode);
+            filterNode.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            osc1.start(startTime);
+            osc2.start(startTime);
+            osc3.start(startTime);
+            osc1.stop(startTime + duration);
+            osc2.stop(startTime + duration);
+            osc3.stop(startTime + duration);
+            
+            return { osc: osc1, gainNode };
+        }
+
+        // Tabla - Percussion sound
+        function createTablaSound(freq, startTime, duration, vol, isSmooth) {
+            const osc = audioContext.createOscillator();
+            const noiseGain = audioContext.createGain();
+            const gainNode = audioContext.createGain();
+            const filterNode = audioContext.createBiquadFilter();
+            
+            osc.type = 'sine';
+            osc.frequency.value = freq * 0.5;
+            
+            filterNode.type = 'highpass';
+            filterNode.frequency.value = 200;
+            
+            // Percussive envelope
+            gainNode.gain.setValueAtTime(0, startTime);
+            gainNode.gain.exponentialRampToValueAtTime(vol * 1.5, startTime + 0.001);
+            gainNode.gain.exponentialRampToValueAtTime(vol * 0.1, startTime + 0.05);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + Math.min(duration, 0.2));
+            
+            osc.connect(filterNode);
+            filterNode.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            osc.start(startTime);
+            osc.stop(startTime + Math.min(duration, 0.2));
+            
+            return { osc, gainNode };
+        }
+
+        // Santoor - Hammered dulcimer
+        function createSantoorSound(freq, startTime, duration, vol, isSmooth) {
+            const osc1 = audioContext.createOscillator();
+            const osc2 = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            const filterNode = audioContext.createBiquadFilter();
+            
+            osc1.type = 'sine';
+            osc2.type = 'sine';
+            osc1.frequency.value = freq;
+            osc2.frequency.value = freq * 3;
+            
+            filterNode.type = 'peaking';
+            filterNode.frequency.value = freq * 2;
+            filterNode.Q.value = 4;
+            filterNode.gain.value = 3;
+            
+            gainNode.gain.setValueAtTime(0, startTime);
+            gainNode.gain.exponentialRampToValueAtTime(vol, startTime + 0.005);
+            gainNode.gain.exponentialRampToValueAtTime(vol * 0.5, startTime + 0.1);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+            
+            osc1.connect(filterNode);
+            osc2.connect(filterNode);
+            filterNode.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            osc1.start(startTime);
+            osc2.start(startTime);
+            osc1.stop(startTime + duration);
+            osc2.stop(startTime + duration);
+            
+            return { osc: osc1, gainNode };
+        }
+
+        // Sarangi - Bowed string
+        function createSarangiSound(freq, startTime, duration, vol, isSmooth) {
+            const osc = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            const filterNode = audioContext.createBiquadFilter();
+            const lfo = audioContext.createOscillator();
+            const lfoGain = audioContext.createGain();
+            
+            osc.type = 'sawtooth';
+            osc.frequency.value = freq;
+            
+            // LFO for tremolo
+            lfo.frequency.value = 6;
+            lfoGain.gain.value = vol * 0.2;
+            lfo.connect(lfoGain);
+            lfoGain.connect(gainNode.gain);
+            
+            filterNode.type = 'lowpass';
+            filterNode.frequency.value = freq * 5;
+            filterNode.Q.value = 8;
+            
+            const attack = isSmooth ? 0.1 : 0.05;
+            const sustain = vol * 0.75;
+            const release = isSmooth ? 0.3 : 0.15;
+            
+            gainNode.gain.setValueAtTime(0, startTime);
+            gainNode.gain.exponentialRampToValueAtTime(sustain, startTime + attack);
+            gainNode.gain.setValueAtTime(sustain, startTime + duration - release);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+            
+            osc.connect(filterNode);
+            filterNode.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            osc.start(startTime);
+            lfo.start(startTime);
+            osc.stop(startTime + duration);
+            lfo.stop(startTime + duration);
+            
+            return { osc, gainNode };
+        }
+
+        function generateNoteSequence() {
+            const ragaName = document.getElementById('ragaSelect').value;
+            if (!ragaName || !RAGAS[ragaName]) return [];
+
+            const taalaName = document.getElementById('taalaSelect').value;
+            const cycles = parseInt(document.getElementById('cycles').value);
+            const tempo = parseInt(document.getElementById('tempo').value);
+            const pattern = document.querySelector('input[name="pattern"]:checked').value;
+            const isSmooth = document.getElementById('smooth').checked;
+            const instrument = document.getElementById('instrument').value;
+
+            const raga = RAGAS[ragaName];
+            const taala = taalas[taalaName];
+            const beatsPerCycle = taala.beats;
+            const totalBeats = beatsPerCycle * cycles;
+            const notesPerBeat = 2;
+            const numNotes = totalBeats * notesPerBeat;
+
+            const arohanam = raga.arohanam;
+            const avarohanam = raga.avarohanam;
+            const allNotes = [...new Set([...arohanam, ...avarohanam])].sort((a, b) => a - b);
+
+            let noteSequence;
+            switch(pattern) {
+                case 'melodic':
+                    noteSequence = generateMelodicPattern(allNotes, numNotes);
+                    break;
+                case 'aroha_avaroha':
+                    noteSequence = generateArohaAvarohaPattern(arohanam, avarohanam, numNotes);
+                    break;
+                case 'random':
+                    noteSequence = generateRandomPattern(allNotes, numNotes);
+                    break;
+                case 'gamaka':
+                    noteSequence = generateGamakaPattern(allNotes, numNotes);
+                    break;
+                default:
+                    noteSequence = generateMelodicPattern(allNotes, numNotes);
+            }
+
+            const rootNote = getRootNote();
+            const secondsPerBeat = 60.0 / tempo;
+            const noteDuration = secondsPerBeat / notesPerBeat;
+            const overlapFactor = isSmooth ? 1.2 : 1.0;
+
+            return noteSequence.map((noteOffset, i) => {
+                const midiNote = Math.max(0, Math.min(127, rootNote + noteOffset));
+                const freq = midiToFreq(midiNote);
+                const startTime = i * noteDuration;
+                const beatPosition = i % (beatsPerCycle * notesPerBeat);
+                const velocity = beatPosition === 0 ? 100 : 80;
+                return { freq, startTime, duration: noteDuration * overlapFactor, velocity };
+            });
+        }
+
+        function scheduleNotesFromIndex(startIndex) {
+            const instrument = document.getElementById('instrument').value;
+            const isSmooth = document.getElementById('smooth').checked;
+            const baseTime = audioContext.currentTime;
+            
+            for (let i = startIndex; i < currentNotes.length; i++) {
+                const note = currentNotes[i];
+                const adjustedStartTime = baseTime + (note.startTime - currentNotes[startIndex].startTime);
+                
+                const oscData = createOscillator(
+                    note.freq,
+                    adjustedStartTime,
+                    note.duration,
+                    instrument,
+                    note.velocity,
+                    isSmooth
+                );
+                scheduledNotes.push(oscData);
+            }
+        }
+
+        function playTune() {
+            if (isPlaying) return;
+
+            currentNotes = generateNoteSequence();
+            if (currentNotes.length === 0) {
+                alert('Please select a raga');
+                return;
+            }
+
+            // UI Updates
+            isPlaying = true;
+            stopPlayback = false;
+            document.getElementById('playBtn').disabled = true;
+            document.getElementById('stopBtn').disabled = false;
+            document.getElementById('saveBtn').disabled = true;
+            
+            const statusBadge = document.getElementById('statusBadge');
+            statusBadge.textContent = 'Playing...';
+            statusBadge.className = 'status-badge playing';
+            
+            const visualCircle = document.getElementById('visualCircle');
+            visualCircle.classList.add('playing');
+            document.getElementById('visualText').textContent = 'Playing';
+            document.getElementById('waveBars').classList.add('playing');
+
+            playbackStartTime = audioContext.currentTime;
+            scheduleNotesFromIndex(0);
+
+            const totalDuration = currentNotes[currentNotes.length - 1].startTime + currentNotes[currentNotes.length - 1].duration;
+            setTimeout(() => {
+                if (!stopPlayback) {
+                    playbackFinished();
+                }
+            }, totalDuration * 1000 + 500);
+        }
+
+        function stopTune() {
+            stopPlayback = true;
+            stopCurrentNotes();
+            setTimeout(() => {
+                playbackFinished(true);
+            }, 150);
+        }
+
+        function playbackFinished(wasStopped = false) {
+            isPlaying = false;
+            document.getElementById('playBtn').disabled = false;
+            document.getElementById('stopBtn').disabled = true;
+            document.getElementById('saveBtn').disabled = false;
+            
+            const statusBadge = document.getElementById('statusBadge');
+            const visualCircle = document.getElementById('visualCircle');
+            visualCircle.classList.remove('playing');
+            document.getElementById('waveBars').classList.remove('playing');
+            
+            if (wasStopped) {
+                statusBadge.textContent = 'Stopped';
+                statusBadge.className = 'status-badge stopped';
+                document.getElementById('visualText').textContent = 'Stopped';
+            } else {
+                statusBadge.textContent = 'Ready to Save';
+                statusBadge.className = 'status-badge ready';
+                document.getElementById('visualText').textContent = 'Complete!';
+            }
+        }
+
+        function saveTune() {
+            if (currentNotes.length === 0) {
+                alert('No tune to save. Please play a tune first.');
+                return;
+            }
+
+            const ragaName = document.getElementById('ragaSelect').value;
+            const taalaName = document.getElementById('taalaSelect').value;
+            const basePitch = document.getElementById('basePitch').value;
+            const pattern = document.querySelector('input[name="pattern"]:checked').value;
+            const instrument = document.getElementById('instrument').value;
+            const cycles = document.getElementById('cycles').value;
+            const tempo = document.getElementById('tempo').value;
+            const octave = document.getElementById('octave').value;
+
+            let midiData = `# Raga Tune Generator - Export\n`;
+            midiData += `# Raga: ${ragaName}\n`;
+            midiData += `# Taala: ${taalaName}\n`;
+            midiData += `# Base Pitch: ${basePitch}\n`;
+            midiData += `# Octave: ${octave}\n`;
+            midiData += `# Cycles: ${cycles}\n`;
+            midiData += `# Tempo: ${tempo}\n`;
+            midiData += `# Instrument: ${instrument}\n`;
+            midiData += `# Pattern: ${pattern}\n`;
+            midiData += `# Smooth: ${document.getElementById('smooth').checked}\n\n`;
+            midiData += `Time(s)\tFrequency(Hz)\tDuration(s)\tVelocity\n`;
+
+            currentNotes.forEach(note => {
+                midiData += `${note.startTime.toFixed(3)}\t${note.freq.toFixed(2)}\t${note.duration.toFixed(3)}\t${note.velocity}\n`;
+            });
+
+            const blob = new Blob([midiData], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${ragaName}_${taalaName}_${basePitch}_${pattern}.txt`.replace(/\s+/g, '_');
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            const statusBadge = document.getElementById('statusBadge');
+            statusBadge.textContent = 'Saved Successfully!';
+            statusBadge.className = 'status-badge ready';
+        }
+
+        function importTune(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const content = e.target.result;
+                const lines = content.split('\n');
+                
+                // Parse metadata
+                let raga, taala, basePitch, octave, cycles, tempo, instrument, pattern, smooth;
+                
+                lines.forEach(line => {
+                    if (line.startsWith('# Raga:')) raga = line.split(':')[1].trim();
+                    if (line.startsWith('# Taala:')) taala = line.split(':')[1].trim();
+                    if (line.startsWith('# Base Pitch:')) basePitch = line.split(':')[1].trim();
+                    if (line.startsWith('# Octave:')) octave = line.split(':')[1].trim();
+                    if (line.startsWith('# Cycles:')) cycles = line.split(':')[1].trim();
+                    if (line.startsWith('# Tempo:')) tempo = line.split(':')[1].trim();
+                    if (line.startsWith('# Instrument:')) instrument = line.split(':')[1].trim();
+                    if (line.startsWith('# Pattern:')) pattern = line.split(':')[1].trim();
+                    if (line.startsWith('# Smooth:')) smooth = line.split(':')[1].trim() === 'true';
+                });
+                
+                // Apply settings
+                if (raga && document.querySelector(`#ragaSelect option[value="${raga}"]`)) {
+                    document.getElementById('ragaSelect').value = raga;
+                }
+                if (taala) document.getElementById('taalaSelect').value = taala;
+                if (basePitch) document.getElementById('basePitch').value = basePitch;
+                if (octave) document.getElementById('octave').value = octave;
+                if (cycles) document.getElementById('cycles').value = cycles;
+                if (tempo) document.getElementById('tempo').value = tempo;
+                if (instrument) document.getElementById('instrument').value = instrument;
+                if (pattern) {
+                    const patternRadio = document.querySelector(`input[name="pattern"][value="${pattern}"]`);
+                    if (patternRadio) patternRadio.checked = true;
+                }
+                if (smooth !== undefined) document.getElementById('smooth').checked = smooth;
+                
+                updateRagaInfo();
+                updateTaalaInfo();
+                updateInfoCards();
+                
+                alert('Settings imported successfully! Click Play to hear the tune.');
+            };
+            
+            reader.readAsText(file);
+            event.target.value = ''; // Reset file input
+        }
+    </script>
+</body>
+</html>
